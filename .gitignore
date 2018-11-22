@@ -23,3 +23,4 @@ yarn-error.log*
 
 #VSCode history
 .history/
+package-lock\.json

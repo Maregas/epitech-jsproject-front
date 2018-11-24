@@ -1,13 +1,13 @@
-.LoginButton {
+.RegisterButton {
     width: 200px !important;
     margin-top: 20px !important;
 }
 
-.LoginTextField {
+.RegisterTextField {
     color: white !important;
     width: 300px !important;
 }
 
-.LoginInputLabel {
+.RegisterInputLabel {
     color: #14b7ff !important;
 }

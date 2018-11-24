@@ -3,8 +3,8 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { loginUser } from "../actions/user-actions";
-import "./styles/Login.css";
+import { registerUser } from "../actions/user-actions";
+import "./styles/Register.css";
 
 const themeProvider = createMuiTheme({
   overrides: {
@@ -29,37 +29,39 @@ const themeProvider = createMuiTheme({
 });
 
 const inputProps = {
-  className: "LoginTextField"
+  className: "RegisterTextField"
 };
 
 const inputLabelProps = {
-  className: "LoginInputLabel"
+  className: "RegisterInputLabel"
 };
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      email: ""
     };
     this.OnInputChange = this.OnInputChange.bind(this);
-    this.clickLogin = this.clickLogin.bind(this);
     this.clickRegister = this.clickRegister.bind(this);
   }
 
-  clickLogin() {
+  clickRegister() {
     const username = this.state.username;
     const password = this.state.password;
-    this.props.OnLoginUser({
-      email: username,
+    const email = this.state.email;
+    this.props.OnRegisterUser({
+      email: email,
+      nickname: username,
       password: password
     });
   }
 
-  clickRegister() {
-    this.props.history.push('/register')
+  clickLogin() {
+    this.props.history.push('/login')
   }
 
   OnInputChange(e) {
@@ -69,9 +71,13 @@ class Login extends Component {
       this.setState({
         username: e.target.value
       });
-    } else {
+    } else if (id === "password") {
       this.setState({
         password: e.target.value
+      });
+    } else if (id === "email") {
+      this.setState({
+        email: e.target.value
       });
     }
   }
@@ -80,11 +86,19 @@ class Login extends Component {
     return (
       <MuiThemeProvider theme={themeProvider}>
         <TextField
+          id="email"
+          label="Email"
+          inputProps={inputProps}
+          InputLabelProps={inputLabelProps}
+          onChange={this.OnInputChange}
+          margin="normal"
+        />
+
+        <TextField
           id="username"
           label="Username"
           inputProps={inputProps}
           InputLabelProps={inputLabelProps}
-          autoComplete="current-password"
           onChange={this.OnInputChange}
           margin="normal"
         />
@@ -92,6 +106,7 @@ class Login extends Component {
         <TextField
           id="password"
           label="Password"
+          className="RegisterTextField"
           inputProps={inputProps}
           InputLabelProps={inputLabelProps}
           type="password"
@@ -103,19 +118,19 @@ class Login extends Component {
         <Button
           variant="extendedFab"
           color="primary"
-          className="LoginButton"
-          onClick={this.clickLogin}
+          className="RegisterButton"
+          onClick={this.clickRegister}
         >
-          Connexion
+          S'inscrire
         </Button>
 
         <Button
           variant="text"
           color="primary"
           className="LoginButton"
-          onClick={this.clickRegister}
+          onClick={this.clickLogin}
         >
-          S'inscrire
+          Se Connecter
         </Button>
       </MuiThemeProvider>
     );
@@ -127,10 +142,10 @@ const mapStateToProps = state => ({
 });
 
 const mapActionsToProps = {
-  OnLoginUser: loginUser
+  OnRegisterUser: registerUser
 };
 
 export default connect(
   mapStateToProps,
   mapActionsToProps
-)(Login);
+)(Register);

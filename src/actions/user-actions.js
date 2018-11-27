@@ -1,5 +1,6 @@
 import { setLoading } from "./loading-actions";
 import { setLogged } from './logged-actions';
+import cookie from 'react-cookies'
 
 export const LOGIN_USER = "user:login";
 
@@ -23,6 +24,7 @@ export function loginUser(userInfos) {
           return
         }
         dispatch(setLogged(true));
+        cookie.save('USER_TOKEN', json.token);
         dispatch({
           type: LOGIN_USER,
           payload: {

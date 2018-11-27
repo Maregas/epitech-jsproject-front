@@ -47,6 +47,7 @@ class Register extends Component {
     };
     this.OnInputChange = this.OnInputChange.bind(this);
     this.clickRegister = this.clickRegister.bind(this);
+    this.clickLogin = this.clickLogin.bind(this);
   }
 
   clickRegister() {

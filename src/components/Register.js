@@ -1,9 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { connect } from "react-redux";
 import { registerUser } from "../actions/user-actions";
+import logo from "../logo.svg";
 import "./styles/Register.css";
 
 const themeProvider = createMuiTheme({
@@ -62,7 +63,7 @@ class Register extends Component {
   }
 
   clickLogin() {
-    this.props.history.push('/login')
+    this.props.history.push("/login");
   }
 
   OnInputChange(e) {
@@ -86,53 +87,56 @@ class Register extends Component {
   render() {
     return (
       <MuiThemeProvider theme={themeProvider}>
-        <TextField
-          id="email"
-          label="Email"
-          inputProps={inputProps}
-          InputLabelProps={inputLabelProps}
-          onChange={this.OnInputChange}
-          margin="normal"
-        />
+        <img src={logo} className="App-logo" alt="logo" />
+        <div className="RegisterContentBody">
+          <TextField
+            id="email"
+            label="Email"
+            inputProps={inputProps}
+            InputLabelProps={inputLabelProps}
+            onChange={this.OnInputChange}
+            margin="normal"
+          />
 
-        <TextField
-          id="username"
-          label="Username"
-          inputProps={inputProps}
-          InputLabelProps={inputLabelProps}
-          onChange={this.OnInputChange}
-          margin="normal"
-        />
+          <TextField
+            id="username"
+            label="Username"
+            inputProps={inputProps}
+            InputLabelProps={inputLabelProps}
+            onChange={this.OnInputChange}
+            margin="normal"
+          />
 
-        <TextField
-          id="password"
-          label="Password"
-          className="RegisterTextField"
-          inputProps={inputProps}
-          InputLabelProps={inputLabelProps}
-          type="password"
-          autoComplete="current-password"
-          onChange={this.OnInputChange}
-          margin="normal"
-        />
+          <TextField
+            id="password"
+            label="Password"
+            className="RegisterTextField"
+            inputProps={inputProps}
+            InputLabelProps={inputLabelProps}
+            type="password"
+            autoComplete="current-password"
+            onChange={this.OnInputChange}
+            margin="normal"
+          />
 
-        <Button
-          variant="extendedFab"
-          color="primary"
-          className="RegisterButton"
-          onClick={this.clickRegister}
-        >
-          S'inscrire
-        </Button>
+          <Button
+            variant="extendedFab"
+            color="primary"
+            className="RegisterButton"
+            onClick={this.clickRegister}
+          >
+            S'inscrire
+          </Button>
 
-        <Button
-          variant="text"
-          color="primary"
-          className="LoginButton"
-          onClick={this.clickLogin}
-        >
-          Se Connecter
-        </Button>
+          <Button
+            variant="text"
+            color="primary"
+            className="LoginButton"
+            onClick={this.clickLogin}
+          >
+            Se Connecter
+          </Button>
+        </div>
       </MuiThemeProvider>
     );
   }

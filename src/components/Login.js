@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Modal from "@material-ui/core/Modal";
+import Typography from "@material-ui/core/Typography";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { connect } from "react-redux";
 import { loginUser } from "../actions/user-actions";
 import "./styles/Login.css";
+import logo from "../logo.svg";
 
 const themeProvider = createMuiTheme({
   overrides: {
@@ -36,13 +39,21 @@ const inputLabelProps = {
   className: "LoginInputLabel"
 };
 
+function getModalStyle() {
+  return {
+    top: "50vh",
+    left: "50vw"
+  };
+}
+
 class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      open: false
     };
     this.OnInputChange = this.OnInputChange.bind(this);
     this.clickLogin = this.clickLogin.bind(this);
@@ -52,14 +63,19 @@ class Login extends Component {
   clickLogin() {
     const username = this.state.username;
     const password = this.state.password;
-    this.props.OnLoginUser({
-      email: username,
-      password: password
-    });
+
+    if (username && password) {
+      this.props.OnLoginUser({
+        email: username,
+        password: password
+      });
+    } else {
+      this.handleOpen();
+    }
   }
 
   clickRegister() {
-    this.props.history.push('/register')
+    this.props.history.push("/register");
   }
 
   OnInputChange(e) {
@@ -76,47 +92,86 @@ class Login extends Component {
     }
   }
 
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   render() {
     return (
       <MuiThemeProvider theme={themeProvider}>
-        <TextField
-          id="username"
-          label="Username"
-          inputProps={inputProps}
-          InputLabelProps={inputLabelProps}
-          autoComplete="current-password"
-          onChange={this.OnInputChange}
-          margin="normal"
-        />
+        <img src={logo} className="App-logo" alt="logo" />
+        <div className="LoginContentBody">
+          <TextField
+            id="username"
+            label="Username"
+            inputProps={inputProps}
+            InputLabelProps={inputLabelProps}
+            autoComplete="current-password"
+            onChange={this.OnInputChange}
+            margin="normal"
+          />
 
-        <TextField
-          id="password"
-          label="Password"
-          inputProps={inputProps}
-          InputLabelProps={inputLabelProps}
-          type="password"
-          autoComplete="current-password"
-          onChange={this.OnInputChange}
-          margin="normal"
-        />
+          <TextField
+            id="password"
+            label="Password"
+            inputProps={inputProps}
+            InputLabelProps={inputLabelProps}
+            type="password"
+            autoComplete="current-password"
+            onChange={this.OnInputChange}
+            margin="normal"
+          />
 
-        <Button
-          variant="extendedFab"
-          color="primary"
-          className="LoginButton"
-          onClick={this.clickLogin}
-        >
-          Connexion
-        </Button>
+          <Button
+            variant="extendedFab"
+            color="primary"
+            className="LoginButton"
+            onClick={this.clickLogin}
+          >
+            Connexion
+          </Button>
 
-        <Button
-          variant="text"
-          color="primary"
-          className="LoginButton"
-          onClick={this.clickRegister}
-        >
-          S'inscrire
-        </Button>
+          <Button
+            variant="text"
+            color="primary"
+            className="LoginButton"
+            onClick={this.clickRegister}
+          >
+            S'inscrire
+          </Button>
+
+          <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.open}
+            onClose={this.handleClose}
+          >
+            <div style={getModalStyle()} className="ModalLogin">
+              <Typography variant="h6" id="modal-title" color="error">
+                Erreur
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                id="simple-modal-description"
+                color="error"
+              >
+                Une erreur est survenue !
+              </Typography>
+              <Button
+                variant="text"
+                color="primary"
+                className="LoginModalButton"
+                onClick={this.handleClose}
+              >
+                OK
+              </Button>
+            </div>
+          </Modal>
+        </div>
       </MuiThemeProvider>
     );
   }

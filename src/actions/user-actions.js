@@ -4,6 +4,31 @@ import cookie from "react-cookies";
 import { SERVER_URL } from "../serverConfig";
 
 export const LOGIN_USER = "user:login";
+export const LOGOUT_USER = "user:logout";
+
+export function logoutUser(token) {
+  return dispatch => {
+    dispatch(setLoading(true));
+    fetch(SERVER_URL + "/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        dispatch(setLoading(false));
+        if (res.ok) return res.json();
+      })
+      .then(json => {
+        console.log(json);
+        if (json.success) {
+          dispatch(setLogged(false));
+          dispatch(actionUser("", {}, LOGOUT_USER));
+        }
+      });
+  };
+}
 
 export function loginUser(userInfos) {
   return dispatch => {
@@ -24,24 +49,34 @@ export function loginUser(userInfos) {
           dispatch(setLogged(false));
           return;
         }
+        dispatch(actionUser(json.token, json, LOGIN_USER));
         dispatch(setLogged(true));
-        dispatchUser(json.token, json, dispatch);
       });
   };
 }
 
-function dispatchUser(token, user, dispatch) {
-  cookie.save("USER_TOKEN", token);
-  dispatch({
-    type: LOGIN_USER,
-    payload: {
-      user: {
-        email: user.email,
-        nickname: user.nickname,
-        token: token
+function actionUser(token, user, type) {
+  if (type === LOGOUT_USER) {
+    cookie.remove("USER_TOKEN");
+    return {
+      type: LOGOUT_USER,
+      payload: {
+        user: {}
       }
-    }
-  });
+    };
+  } else {
+    cookie.save("USER_TOKEN", token);
+    return {
+      type: LOGIN_USER,
+      payload: {
+        user: {
+          email: user.email,
+          nickname: user.nickname,
+          token: token
+        }
+      }
+    };
+  }
 }
 
 export function registerUser(userInfos) {
@@ -83,7 +118,7 @@ export function checkTokenIsValid(userToken) {
       .then(json => {
         if (json.valid) {
           dispatch(setLoading(false));
-          dispatchUser(userToken, json.user, dispatch);
+          dispatch(actionUser(userToken, json.user, LOGIN_USER));
           dispatch(setLogged(true));
         } else cookie.remove("USER_TOKEN");
       });

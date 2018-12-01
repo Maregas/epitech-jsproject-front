@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Redirect } from "react-router";
-import { checkTokenIsValid } from "../actions/user-actions";
+import { checkTokenIsValid } from "../../actions/user-actions";
 import cookie from "react-cookies";
-import Login from "./Login";
-import "./styles/App.css";
-import Loading from "./Loading";
-import Register from "./Register";
-import Home from "./Home";
+import Login from "../Login/Login";
+import "./App.css";
+import Loading from "../Loading/Loading";
+import Register from "../Register/Register";
+import Home from "../Home/Home";
 
 class App extends Component {
   componentWillMount() {
@@ -22,8 +22,14 @@ class App extends Component {
       <Router>
         <div className="App">
           <div className="App-Body">
-            {this.props.isLogged && document.location.pathname === '/login' &&  <Redirect to="/home" />}
-            {!this.props.isLogged && document.location.pathname !== '/login' &&  <Redirect to="/login" />}
+            {this.props.isLogged &&
+              document.location.pathname === "/login" && (
+                <Redirect to="/home" />
+              )}
+            {!this.props.isLogged &&
+              document.location.pathname !== "/login" && (
+                <Redirect to="/login" />
+              )}
 
             <Route exact path="/home" component={Home} />
             <Route exact path="/login" component={Login} />

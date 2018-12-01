@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import Game from "./Game";
-import { retrieveGames } from "../actions/game-actions";
-import "./styles/GamesContainer.css";
+import Game from "../Game/Game";
+import { retrieveGames } from "../../actions/game-actions";
+import "./GamesContainer.css";
 
 class GamesContainer extends Component {
   componentWillMount() {
@@ -17,8 +17,8 @@ class GamesContainer extends Component {
           <Grid item xs={6}>
             <Grid container spacing={24}>
               {this.props.games.map(e => (
-                <Grid key={e.name} item xs={4}>
-                  <Game game={e} />
+                <Grid key={e.id} item xs={12} md={6} lg={4}>
+                  <Game game={e} history={this.props.history} />
                 </Grid>
               ))}
             </Grid>

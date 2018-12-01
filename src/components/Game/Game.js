@@ -24,6 +24,16 @@ const styles = {
 };
 
 class Game extends Component {
+  constructor(props) {
+    super(props);
+
+    this.goToGame = this.goToGame.bind(this);
+  }
+
+  goToGame(e) {
+    this.props.history.push("/game/" + this.props.game.id);
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -38,12 +48,18 @@ class Game extends Component {
             <Typography gutterBottom variant="h5" component="h2">
               {this.props.game.name}
             </Typography>
-            <Typography className={classes.desc}
-              component="p">{this.props.game.description}</Typography>
+            <Typography className={classes.desc} component="p">
+              {this.props.game.description}
+            </Typography>
           </CardContent>
         </CardActionArea>
         <CardActions>
-          <Button size="small" color="primary">
+          <Button
+            value={this.props.game.id}
+            onClick={this.goToGame}
+            size="small"
+            color="primary"
+          >
             GO TO
           </Button>
         </CardActions>

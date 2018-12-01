@@ -1,0 +1,11 @@
+.GameChatTextField {
+  color: white !important;
+}
+
+.GameChatInputLabel {
+  color: #14b7ff !important;
+}
+
+.GameChatInputLabel:hover {
+  color: white !important;
+}

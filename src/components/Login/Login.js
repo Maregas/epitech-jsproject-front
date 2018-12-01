@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Modal from "@material-ui/core/Modal";
+import Typography from "@material-ui/core/Typography";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { registerUser } from "../actions/user-actions";
-import logo from "../logo.svg";
-import "./styles/Register.css";
+import { loginUser } from "../../actions/user-actions";
+import "./Login.css";
+import logo from "../../logo.svg";
 
 const themeProvider = createMuiTheme({
   overrides: {
@@ -30,40 +32,50 @@ const themeProvider = createMuiTheme({
 });
 
 const inputProps = {
-  className: "RegisterTextField"
+  className: "LoginTextField"
 };
 
 const inputLabelProps = {
-  className: "RegisterInputLabel"
+  className: "LoginInputLabel"
 };
 
-class Register extends Component {
+function getModalStyle() {
+  return {
+    top: "50vh",
+    left: "50vw"
+  };
+}
+
+class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       username: "",
       password: "",
-      email: ""
+      open: false
     };
     this.OnInputChange = this.OnInputChange.bind(this);
-    this.clickRegister = this.clickRegister.bind(this);
     this.clickLogin = this.clickLogin.bind(this);
-  }
-
-  clickRegister() {
-    const username = this.state.username;
-    const password = this.state.password;
-    const email = this.state.email;
-    this.props.OnRegisterUser({
-      email: email,
-      nickname: username,
-      password: password
-    });
+    this.clickRegister = this.clickRegister.bind(this);
   }
 
   clickLogin() {
-    this.props.history.push("/login");
+    const username = this.state.username;
+    const password = this.state.password;
+
+    if (username && password) {
+      this.props.OnLoginUser({
+        email: username,
+        password: password
+      });
+    } else {
+      this.handleOpen();
+    }
+  }
+
+  clickRegister() {
+    this.props.history.push("/register");
   }
 
   OnInputChange(e) {
@@ -73,36 +85,32 @@ class Register extends Component {
       this.setState({
         username: e.target.value
       });
-    } else if (id === "password") {
+    } else {
       this.setState({
         password: e.target.value
       });
-    } else if (id === "email") {
-      this.setState({
-        email: e.target.value
-      });
     }
   }
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
   render() {
     return (
       <MuiThemeProvider theme={themeProvider}>
         <img src={logo} className="App-logo" alt="logo" />
-        <div className="RegisterContentBody">
-          <TextField
-            id="email"
-            label="Email"
-            inputProps={inputProps}
-            InputLabelProps={inputLabelProps}
-            onChange={this.OnInputChange}
-            margin="normal"
-          />
-
+        <div className="LoginContentBody">
           <TextField
             id="username"
             label="Username"
             inputProps={inputProps}
             InputLabelProps={inputLabelProps}
+            autoComplete="current-password"
             onChange={this.OnInputChange}
             margin="normal"
           />
@@ -110,7 +118,6 @@ class Register extends Component {
           <TextField
             id="password"
             label="Password"
-            className="RegisterTextField"
             inputProps={inputProps}
             InputLabelProps={inputLabelProps}
             type="password"
@@ -122,20 +129,48 @@ class Register extends Component {
           <Button
             variant="extendedFab"
             color="primary"
-            className="RegisterButton"
-            onClick={this.clickRegister}
+            className="LoginButton"
+            onClick={this.clickLogin}
           >
-            S'inscrire
+            Connexion
           </Button>
 
           <Button
             variant="text"
             color="primary"
             className="LoginButton"
-            onClick={this.clickLogin}
+            onClick={this.clickRegister}
           >
-            Se Connecter
+            S'inscrire
           </Button>
+
+          <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.open}
+            onClose={this.handleClose}
+          >
+            <div style={getModalStyle()} className="ModalLogin">
+              <Typography variant="h6" id="modal-title" color="error">
+                Erreur
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                id="simple-modal-description"
+                color="error"
+              >
+                Une erreur est survenue !
+              </Typography>
+              <Button
+                variant="text"
+                color="primary"
+                className="LoginModalButton"
+                onClick={this.handleClose}
+              >
+                OK
+              </Button>
+            </div>
+          </Modal>
         </div>
       </MuiThemeProvider>
     );
@@ -147,10 +182,10 @@ const mapStateToProps = state => ({
 });
 
 const mapActionsToProps = {
-  OnRegisterUser: registerUser
+  OnLoginUser: loginUser
 };
 
 export default connect(
   mapStateToProps,
   mapActionsToProps
-)(Register);
+)(Login);

@@ -11,7 +11,7 @@ import Register from "./Register";
 import Home from "./Home";
 
 class App extends Component {
-  componentDidMount() {
+  componentWillMount() {
     const token = cookie.load("USER_TOKEN");
 
     if (token) this.props.OnCheckValidToken(token);
@@ -22,8 +22,8 @@ class App extends Component {
       <Router>
         <div className="App">
           <div className="App-Body">
-            {!this.props.isLogged && <Redirect from="/" to="/login" />}
-            {this.props.isLogged && <Redirect from="/" to="/home" />}
+            {this.props.isLogged && document.location.pathname === '/login' &&  <Redirect to="/home" />}
+            {!this.props.isLogged && document.location.pathname !== '/login' &&  <Redirect to="/login" />}
 
             <Route exact path="/home" component={Home} />
             <Route exact path="/login" component={Login} />
@@ -38,7 +38,8 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   isLoading: state.loading,
-  isLogged: state.logged
+  isLogged: state.logged,
+  location: state.location
 });
 
 const mapActionsToProps = {

@@ -1,13 +1,14 @@
 import { setLoading } from "./loading-actions";
-import { setLogged } from './logged-actions';
-import cookie from 'react-cookies'
+import { setLogged } from "./logged-actions";
+import cookie from "react-cookies";
+import { SERVER_URL } from "../serverConfig";
 
 export const LOGIN_USER = "user:login";
 
 export function loginUser(userInfos) {
   return dispatch => {
     dispatch(setLoading(true));
-    fetch("http://localhost:8080/api/login", {
+    fetch(SERVER_URL + "/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -21,23 +22,23 @@ export function loginUser(userInfos) {
         dispatch(setLoading(false));
         if (json.auth !== true) {
           dispatch(setLogged(false));
-          return
+          return;
         }
         dispatch(setLogged(true));
-        dispatchUser(json.token, json, dispatch)
+        dispatchUser(json.token, json, dispatch);
       });
   };
 }
 
 function dispatchUser(token, user, dispatch) {
-  cookie.save('USER_TOKEN', token);
+  cookie.save("USER_TOKEN", token);
   dispatch({
     type: LOGIN_USER,
     payload: {
       user: {
         email: user.email,
         nickname: user.nickname,
-        token: `${user.tokenType} ${user.token}`
+        token: token
       }
     }
   });
@@ -46,7 +47,7 @@ function dispatchUser(token, user, dispatch) {
 export function registerUser(userInfos) {
   return dispatch => {
     dispatch(setLoading(true));
-    fetch("http://localhost:8080/api/signup", {
+    fetch(SERVER_URL + "/api/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -66,22 +67,25 @@ export function registerUser(userInfos) {
 
 export function checkTokenIsValid(userToken) {
   return dispatch => {
-    fetch("http://localhost:8080/api/account/me", {
+    dispatch(setLoading(true));
+    fetch(SERVER_URL + "/api/account/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${userToken}`
+        Authorization: `Bearer ${userToken}`
       }
     })
       .then(res => {
         if (res.ok) return res.json();
-        else return res.statusText;
+        else dispatch(setLoading(false));
+        return res.statusText;
       })
       .then(json => {
         if (json.valid) {
-          dispatch(setLogged(true));
+          dispatch(setLoading(false));
           dispatchUser(userToken, json.user, dispatch);
-        } else cookie.remove('USER_TOKEN')
+          dispatch(setLogged(true));
+        } else cookie.remove("USER_TOKEN");
       });
   };
 }

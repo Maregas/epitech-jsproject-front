@@ -37,9 +37,13 @@ const styles = theme => ({
     minHeight: 0,
     overflow: "auto"
   },
+  bottomList: {
+    display: "flex",
+    flexDirection: "column-reverse"
+  },
   messageList: {
     display: "flex",
-    flexDirection: "column-reverse",
+    flexDirection: "column",
     listStyleType: "none",
     flex: 1,
     padding: 10,
@@ -91,9 +95,12 @@ class GameChat extends Component {
     this.state = {
       message: "",
       list: [],
-      socket: io.connect(SERVER_SOCKET, {
-        transports: ['websocket'],
-      }),
+      socket: io.connect(
+        SERVER_SOCKET,
+        {
+          transports: ["websocket"]
+        }
+      ),
       roomName: this.props.match.params.id
     };
 
@@ -111,7 +118,6 @@ class GameChat extends Component {
         message: data.msg
       };
       if (data.username === userName) obj.me = true;
-
 
       const newArray = Array.from(this.state.list);
       newArray.push(obj);
@@ -167,26 +173,28 @@ class GameChat extends Component {
           </div>
 
           <div className={classes.containerList}>
-            <ul className={classes.messageList}>
-              {this.state.list.map(e => (
-                <li key={e.id} className={classes.itemList}>
-                  <p className={classes.nickname}>{e.username}</p>
-                  {e.me ? (
-                    <Chip
-                      label={e.message}
-                      color="primary"
-                      className={classes.chip}
-                    />
-                  ) : (
-                    <Chip
-                      label={e.message}
-                      color="secondary"
-                      className={classes.chip}
-                    />
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className={classes.bottomList}>
+              <ul className={classes.messageList}>
+                {this.state.list.map(e => (
+                  <li key={e.id} className={classes.itemList}>
+                    <p className={classes.nickname}>{e.username}</p>
+                    {e.me ? (
+                      <Chip
+                        label={e.message}
+                        color="primary"
+                        className={classes.chip}
+                      />
+                    ) : (
+                      <Chip
+                        label={e.message}
+                        color="secondary"
+                        className={classes.chip}
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </MuiThemeProvider>

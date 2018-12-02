@@ -144,8 +144,7 @@ class Login extends Component {
           >
             S'inscrire
           </Button>
-
-          {this.props.isError ? this.state.open = true : this.state.open = false}
+          
           <Modal
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"

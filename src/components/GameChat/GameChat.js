@@ -91,7 +91,9 @@ class GameChat extends Component {
     this.state = {
       message: "",
       list: [],
-      socket: io(SERVER_SOCKET),
+      socket: io.connect(SERVER_SOCKET, {
+        transports: ['websocket'],
+      }),
       roomName: this.props.match.params.id
     };
 

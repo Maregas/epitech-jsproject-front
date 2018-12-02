@@ -45,7 +45,7 @@ export function loginUser(userInfos) {
       })
       .then(json => {
         dispatch(setLoading(false));
-        if (json.auth !== true) {
+        if (!json || json.success !== true) {
           dispatch(setLogged(false));
           return;
         }
@@ -116,8 +116,8 @@ export function checkTokenIsValid(userToken) {
         return res.statusText;
       })
       .then(json => {
-        if (json.valid) {
-          dispatch(setLoading(false));
+        dispatch(setLoading(false));
+        if (json.success) {
           dispatch(actionUser(userToken, json.user, LOGIN_USER));
           dispatch(setLogged(true));
         } else cookie.remove("USER_TOKEN");

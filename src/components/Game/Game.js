@@ -31,7 +31,8 @@ class Game extends Component {
   }
 
   goToGame(e) {
-    this.props.history.push("/game/" + this.props.game.id);
+    const idRoom = this.props.game.id + '-' + this.props.game.name;
+    this.props.history.push("/game/" + idRoom);
   }
 
   render() {

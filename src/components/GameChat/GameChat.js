@@ -3,21 +3,56 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Chip from "@material-ui/core/Chip";
+import io from "socket.io-client";
+import { SERVER_SOCKET } from "../../serverConfig";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import "./GameChat.css";
+import { connect } from "react-redux";
 
-const styles = {
+const styles = theme => ({
+  chip: {
+    margin: theme.spacing.unit
+  },
   container: {
     display: "flex",
     flexDirection: "column-reverse",
     position: "absolute",
+    alignItems: "stretch",
     width: "100vw",
+    paddingLeft: 10,
     height: "calc(100vh - 70px)"
   },
+  controls: {
+    flexDirection: "column-reverse",
+    width: "100vw",
+    alignItems: "stretch",
+    display: "flex",
+    height: 110
+  },
+  containerList: {
+    display: "flex",
+    flexDirection: "column-reverse",
+    flex: 1,
+    minHeight: 0,
+    overflow: "auto"
+  },
   messageList: {
-    flexGrow : 1
+    display: "flex",
+    flexDirection: "column-reverse",
+    listStyleType: "none",
+    flex: 1,
+    padding: 10,
+    maxWidth: 1000
+  },
+  itemList: {
+    margin: 5
+  },
+  nickname: {
+    fontSize: "small",
+    margin: 0
   }
-};
+});
 
 const themeProvider = createMuiTheme({
   overrides: {
@@ -54,10 +89,36 @@ class GameChat extends Component {
     super(props);
 
     this.state = {
-      message: ""
+      message: "",
+      list: [],
+      socket: io(SERVER_SOCKET),
+      roomName: this.props.match.params.id
     };
 
+    const userName = this.props.user.nickname;
+    this.state.socket.emit("room", {
+      room: this.state.roomName,
+      username: userName
+    });
+
+    this.state.socket.on("chat message", data => {
+      const obj = {
+        me: false,
+        username: data.username,
+        message: data.msg
+      };
+      if (data.username === userName) obj.me = true;
+
+
+      const newArray = Array.from(this.state.list);
+      newArray.push(obj);
+      this.setState({
+        list: newArray
+      });
+    });
+
     this.OnInputChange = this.OnInputChange.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
   }
 
   OnInputChange(e) {
@@ -66,33 +127,63 @@ class GameChat extends Component {
     });
   }
 
+  sendMessage() {
+    const roomName = this.state.roomName;
+    const userName = this.props.user.nickname;
+    const message = this.state.message;
+
+    this.state.socket.emit("chat message", {
+      room: roomName,
+      username: userName,
+      msg: message
+    });
+  }
+
   render() {
     const { classes } = this.props;
     return (
       <MuiThemeProvider theme={themeProvider}>
         <div className={classes.container}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth={true}
-            onClick={this.clickRegister}
-          >
-            SEND
-          </Button>
+          <div className={classes.controls}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.sendMessage}
+            >
+              SEND
+            </Button>
 
-          <TextField
-            id="message"
-            label="Your Message here"
-            inputProps={inputProps}
-            fullWidth={true}
-            InputLabelProps={inputLabelProps}
-            autoComplete="current-password"
-            onChange={this.OnInputChange}
-            margin="normal"
-          />
+            <TextField
+              id="message"
+              label="Your Message here"
+              inputProps={inputProps}
+              InputLabelProps={inputLabelProps}
+              onChange={this.OnInputChange}
+              margin="normal"
+            />
+          </div>
 
-          <div className={classes.messageList}>
-
+          <div className={classes.containerList}>
+            <ul className={classes.messageList}>
+              {this.state.list.map(e => (
+                <li className={classes.itemList}>
+                  <p className={classes.nickname}>{e.username}</p>
+                  {e.me ? (
+                    <Chip
+                      label={e.message}
+                      color="primary"
+                      className={classes.chip}
+                    />
+                  ) : (
+                    <Chip
+                      label={e.message}
+                      color="secondary"
+                      className={classes.chip}
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </MuiThemeProvider>
@@ -104,4 +195,11 @@ GameChat.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(GameChat);
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(
+  mapStateToProps,
+  {}
+)(withStyles(styles)(GameChat));

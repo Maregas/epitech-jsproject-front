@@ -146,6 +146,10 @@ class GameChat extends Component {
       username: userName,
       msg: message
     });
+
+    this.setState({
+      message: ''
+    })
   }
 
   render() {
@@ -168,6 +172,7 @@ class GameChat extends Component {
               inputProps={inputProps}
               InputLabelProps={inputLabelProps}
               onChange={this.OnInputChange}
+              value={this.state.message}
               margin="normal"
             />
           </div>

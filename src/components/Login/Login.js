@@ -6,6 +6,7 @@ import Modal from "@material-ui/core/Modal";
 import Typography from "@material-ui/core/Typography";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { loginUser } from "../../actions/user-actions";
+import { setError } from "../../actions/error-actions";
 import "./Login.css";
 import logo from "../../logo.svg";
 
@@ -93,11 +94,11 @@ class Login extends Component {
   }
 
   handleOpen = () => {
-    this.setState({ open: true });
+    this.props.OnErrorClose(true);
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.props.OnErrorClose(false);
   };
 
   render() {
@@ -107,7 +108,7 @@ class Login extends Component {
         <div className="LoginContentBody">
           <TextField
             id="username"
-            label="Username"
+            label="Email"
             inputProps={inputProps}
             InputLabelProps={inputLabelProps}
             autoComplete="current-password"
@@ -144,6 +145,7 @@ class Login extends Component {
             S'inscrire
           </Button>
 
+          {this.props.isError ? this.state.open = true : this.state.open = false}
           <Modal
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
@@ -178,11 +180,13 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  isError: state.error
 });
 
 const mapActionsToProps = {
-  OnLoginUser: loginUser
+  OnLoginUser: loginUser,
+  OnErrorClose: setError
 };
 
 export default connect(

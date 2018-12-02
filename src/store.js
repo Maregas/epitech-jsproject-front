@@ -5,12 +5,14 @@ import loggedReducer from "./reducers/logged-reducer";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from 'redux-devtools-extension'
 import gameReducer from './reducers/game-reducer';
+import errorReducer from './reducers/error-reducer';
 
 const allReducers = combineReducers({
   user: userReducer,
   loading: loadingReducer,
   logged: loggedReducer,
-  games: gameReducer
+  games: gameReducer,
+  error: errorReducer
 });
 
 const middleWares = [thunk];

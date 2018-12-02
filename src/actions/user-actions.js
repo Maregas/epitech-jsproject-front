@@ -1,5 +1,6 @@
 import { setLoading } from "./loading-actions";
 import { setLogged } from "./logged-actions";
+import { setError } from "./error-actions";
 import cookie from "react-cookies";
 import { SERVER_URL } from "../serverConfig";
 
@@ -46,7 +47,7 @@ export function loginUser(userInfos) {
       .then(json => {
         dispatch(setLoading(false));
         if (!json || json.success !== true) {
-          dispatch(setLogged(false));
+          dispatch(setError(true));
           return;
         }
         dispatch(actionUser(json.token, json, LOGIN_USER));

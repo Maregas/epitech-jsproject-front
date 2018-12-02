@@ -104,6 +104,7 @@ class GameChat extends Component {
     this.state.socket.on("chat message", data => {
       const obj = {
         me: false,
+        id: data.id,
         username: data.username,
         message: data.msg
       };
@@ -166,7 +167,7 @@ class GameChat extends Component {
           <div className={classes.containerList}>
             <ul className={classes.messageList}>
               {this.state.list.map(e => (
-                <li className={classes.itemList}>
+                <li key={e.id} className={classes.itemList}>
                   <p className={classes.nickname}>{e.username}</p>
                   {e.me ? (
                     <Chip
